@@ -2,6 +2,7 @@ import Fastify, { FastifyError } from 'fastify';
 import { monitorRoutes } from './routes/monitors';
 import { AppError } from './lib/errors';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
+import { ingestRoutes } from './routes/ingest';
 
 export function buildApp() {
 
@@ -11,6 +12,7 @@ export function buildApp() {
 	app.setSerializerCompiler(serializerCompiler);
 
 	app.register(monitorRoutes, { prefix: '/api/monitors' });
+	app.register(ingestRoutes, { prefix: "/api/ingest" });
 
 	app.setErrorHandler((error: FastifyError, request, reply) => {
 
