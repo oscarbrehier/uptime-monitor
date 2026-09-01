@@ -1,0 +1,17 @@
+# Node
+node_modules
+.next
+dist
+
+# Rust
+services/worker/target
+
+# Environment files
+.env
+.env.local
+*.env
+
+# Supabase Local Secrets & Temp Files
+supabase/.temp/
+supabase/.branches/
+services/worker/supabase/

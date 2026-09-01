@@ -1,0 +1,16 @@
+{
+  "name": "uptime-monitor",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "pnpm --filter api-gateway dev",
+    "dev:worker": "cd services/worker && cargo run",
+    "db:types": "pnpm dlx supabase gen types typescript --local > apps/web/src/types/database.types.ts && pnpm dlx supabase gen types typescript --local > services/api-gateway/src/types/database.types.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.29.3"
+}

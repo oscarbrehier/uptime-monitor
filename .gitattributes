@@ -1,0 +1,5 @@
+# Auto-detect text files and enforce LF line endings
+* text=auto eol=lf
+
+# Explicitly keep shell scripts as LF
+*.sh text eol=lf
