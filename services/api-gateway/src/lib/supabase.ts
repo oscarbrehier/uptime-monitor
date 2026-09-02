@@ -4,5 +4,5 @@ import { env } from "../types/env";
 
 export const supabaseAdmin = createClient<Database>(
 	env.SUPABASE_URL,
-	env.SUPABASE_SERVICE_ROLE_KEY
+	env.SUPABASE_SECRET
 );
