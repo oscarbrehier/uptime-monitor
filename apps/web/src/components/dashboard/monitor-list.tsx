@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, Radar, Search } from "lucide-react";
 
 import { EmptyState } from "@/components/dashboard/empty-state";
@@ -9,35 +10,63 @@ import { MonitorFormDialog } from "@/components/dashboard/monitor-form-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Monitor, MonitorStatus } from "@/lib/mock-data";
+import { deleteMonitor, toggleMonitor } from "@/lib/actions/monitors";
+import { deriveStatus, monitorName, type MonitorStatus, type MonitorWithStats } from "@/lib/monitorUtils";
 
 type Filter = "all" | MonitorStatus;
 
-export function MonitorList({ monitors: initial }: { monitors: Monitor[] }) {
+export function MonitorList({ monitors: initial }: { monitors: MonitorWithStats[] }) {
+  const router = useRouter();
   const [monitors, setMonitors] = useState(initial);
+  const [prevInitial, setPrevInitial] = useState(initial);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+
+  if (initial !== prevInitial) {
+    setPrevInitial(initial);
+    setMonitors(initial);
+  }
 
   const filtered = useMemo(() => {
     return monitors.filter((m) => {
       if (filter !== "all" && m.status !== filter) return false;
-      if (query && !m.name.toLowerCase().includes(query.toLowerCase())) return false;
+      if (query && !monitorName(m.url).toLowerCase().includes(query.toLowerCase())) return false;
       return true;
     });
   }, [monitors, filter, query]);
 
-  function togglePause(id: string) {
+  async function togglePause(id: string) {
+    const target = monitors.find((m) => m.id === id);
+    if (!target) return;
+    const nextActive = !target.is_active;
     setMonitors((prev) =>
       prev.map((m) =>
         m.id === id
-          ? { ...m, status: m.status === "paused" ? "operational" : "paused" }
+          ? { ...m, is_active: nextActive, status: deriveStatus(nextActive, m.uptime24h, m.pingCount) }
           : m,
       ),
     );
+    const result = await toggleMonitor(id, target.is_active);
+    if (!result.success) {
+      setMonitors((prev) =>
+        prev.map((m) =>
+          m.id === id
+            ? { ...m, is_active: target.is_active, status: deriveStatus(target.is_active, m.uptime24h, m.pingCount) }
+            : m,
+        ),
+      );
+    }
+    router.refresh();
   }
 
-  function remove(id: string) {
+  async function remove(id: string) {
+    const previous = monitors;
     setMonitors((prev) => prev.filter((m) => m.id !== id));
+    const result = await deleteMonitor(id);
+    if (!result.success) {
+      setMonitors(previous);
+    }
+    router.refresh();
   }
 
   if (monitors.length === 0) {

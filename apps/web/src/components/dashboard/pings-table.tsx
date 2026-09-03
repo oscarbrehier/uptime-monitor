@@ -14,28 +14,35 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getMonitor, type PingLog } from "@/lib/mock-data";
+import { pingStatus, type Ping, type PingStatus } from "@/lib/monitorUtils";
 import { cn } from "@/lib/utils";
 
-type Filter = "all" | "success" | "error" | "timeout";
+type Filter = "all" | PingStatus;
 
-function statusLabel(ping: PingLog) {
-  if (ping.status === "timeout") return "Timeout";
-  return `${ping.statusCode} ${ping.status === "success" ? "OK" : "Error"}`;
+function statusLabel(status: PingStatus, statusCode: number) {
+  if (status === "timeout") return "Timeout";
+  return `${statusCode} ${status === "success" ? "OK" : "Error"}`;
 }
 
-export function PingsTable({ pings }: { pings: PingLog[] }) {
+export function PingsTable({
+  pings,
+  monitorNames,
+}: {
+  pings: Ping[];
+  monitorNames: Record<string, string>;
+}) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
 
   const filtered = useMemo(() => {
     return pings.filter((ping) => {
-      if (filter !== "all" && ping.status !== filter) return false;
+      const status = pingStatus(ping.status_code);
+      if (filter !== "all" && status !== filter) return false;
       if (!query) return true;
-      const monitor = getMonitor(ping.monitorId);
-      return monitor?.name.toLowerCase().includes(query.toLowerCase());
+      const name = monitorNames[ping.monitor_id] ?? ping.monitor_id;
+      return name.toLowerCase().includes(query.toLowerCase());
     });
-  }, [pings, filter, query]);
+  }, [pings, filter, query, monitorNames]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -66,50 +73,44 @@ export function PingsTable({ pings }: { pings: PingLog[] }) {
               <TableHead>Monitor</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Latency</TableHead>
-              <TableHead>Region</TableHead>
               <TableHead className="text-right">Checked</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
+                <TableCell colSpan={4} className="py-10 text-center text-muted-foreground">
                   No pings match this filter.
                 </TableCell>
               </TableRow>
             )}
             {filtered.slice(0, 20).map((ping) => {
-              const monitor = getMonitor(ping.monitorId);
+              const status = pingStatus(ping.status_code);
               return (
                 <TableRow key={ping.id}>
-                  <TableCell className="font-medium">{monitor?.name ?? ping.monitorId}</TableCell>
+                  <TableCell className="font-medium">
+                    {monitorNames[ping.monitor_id] ?? ping.monitor_id}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       variant={
-                        ping.status === "success"
-                          ? "operational"
-                          : ping.status === "timeout"
-                            ? "paused"
-                            : "incident"
+                        status === "success" ? "operational" : status === "timeout" ? "paused" : "incident"
                       }
                       className="font-mono"
                     >
-                      {statusLabel(ping)}
+                      {statusLabel(status, ping.status_code)}
                     </Badge>
                   </TableCell>
                   <TableCell
                     className={cn(
                       "font-mono text-xs",
-                      ping.latencyMs > 800 && "text-status-degraded",
+                      ping.latency_ms > 800 && "text-status-degraded",
                     )}
                   >
-                    {ping.latencyMs}ms
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground uppercase">
-                    {ping.region}
+                    {ping.latency_ms}ms
                   </TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground">
-                    {new Date(ping.timestamp).toLocaleTimeString()}
+                    {new Date(ping.created_at).toLocaleTimeString()}
                   </TableCell>
                 </TableRow>
               );

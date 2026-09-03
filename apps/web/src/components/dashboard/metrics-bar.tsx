@@ -1,7 +1,7 @@
 import { Activity, Gauge, Layers, TriangleAlert } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
-import type { MetricsSummary } from "@/lib/mock-data";
+import type { MetricsSummary } from "@/lib/monitorUtils";
 import { cn } from "@/lib/utils";
 
 export function MetricsBar({ metrics }: { metrics: MetricsSummary }) {
@@ -25,10 +25,10 @@ export function MetricsBar({ metrics }: { metrics: MetricsSummary }) {
       accent: "text-violet-accent",
     },
     {
-      label: "Open incidents",
-      value: metrics.openIncidents,
+      label: "Monitors down",
+      value: metrics.monitorsDown,
       icon: TriangleAlert,
-      accent: metrics.openIncidents > 0 ? "text-rose-glow" : "text-emerald-glow",
+      accent: metrics.monitorsDown > 0 ? "text-rose-glow" : "text-emerald-glow",
     },
   ];
 

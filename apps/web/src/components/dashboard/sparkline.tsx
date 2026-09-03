@@ -2,7 +2,7 @@
 
 import { AreaChart, Area, ResponsiveContainer, YAxis } from "recharts";
 
-import type { MonitorStatus } from "@/lib/mock-data";
+import type { MonitorStatus } from "@/lib/monitorUtils";
 
 const STROKE: Record<MonitorStatus, string> = {
   operational: "#10b981",

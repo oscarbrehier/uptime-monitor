@@ -1,3 +1,5 @@
+"use server"
+
 import { ActionResponse } from "@/types/actions";
 import { Database } from "@/types/database.types";
 import { createClient } from "../supabase/server";

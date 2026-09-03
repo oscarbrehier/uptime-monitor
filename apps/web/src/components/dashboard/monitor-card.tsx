@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { MoreHorizontal, Pause, Play, Pencil, Trash2, ArrowUpRight } from "lucide-react";
+import { MoreHorizontal, Pause, Play, Trash2, ArrowUpRight } from "lucide-react";
 
-import { MonitorFormDialog } from "@/components/dashboard/monitor-form-dialog";
 import { Sparkline } from "@/components/dashboard/sparkline";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { Button } from "@/components/ui/button";
@@ -15,14 +14,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Monitor } from "@/lib/mock-data";
+import { monitorName, type MonitorWithStats } from "@/lib/monitorUtils";
 
 export function MonitorCard({
   monitor,
   onTogglePause,
   onDelete,
 }: {
-  monitor: Monitor;
+  monitor: MonitorWithStats;
   onTogglePause: (id: string) => void;
   onDelete: (id: string) => void;
 }) {
@@ -34,7 +33,7 @@ export function MonitorCard({
             href={`/monitors/${monitor.id}`}
             className="group flex items-center gap-1.5 text-sm font-semibold"
           >
-            <span className="truncate">{monitor.name}</span>
+            <span className="truncate">{monitorName(monitor.url)}</span>
             <ArrowUpRight className="size-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
           </Link>
           <p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
@@ -48,15 +47,6 @@ export function MonitorCard({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <MonitorFormDialog
-              monitor={monitor}
-              trigger={
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  <Pencil />
-                  Edit
-                </DropdownMenuItem>
-              }
-            />
             <DropdownMenuItem onSelect={() => onTogglePause(monitor.id)}>
               {monitor.status === "paused" ? <Play /> : <Pause />}
               {monitor.status === "paused" ? "Resume" : "Pause"}
@@ -85,7 +75,7 @@ export function MonitorCard({
         </div>
         <div>
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Interval</p>
-          <p className="mt-0.5 font-mono font-medium">{monitor.checkInterval}s</p>
+          <p className="mt-0.5 font-mono font-medium">{monitor.interval_seconds}s</p>
         </div>
       </div>
     </Card>

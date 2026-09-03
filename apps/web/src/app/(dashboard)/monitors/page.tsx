@@ -1,9 +1,11 @@
 import { MonitorList } from "@/components/dashboard/monitor-list";
-import { monitors } from "@/lib/mock-data";
+import { getMonitorsWithStats } from "@/lib/monitorUtils";
 
 export const metadata = { title: "Monitors" };
 
-export default function MonitorsPage() {
+export default async function MonitorsPage() {
+  const monitors = await getMonitorsWithStats();
+
   return (
     <div className="flex flex-col gap-6">
       <div>

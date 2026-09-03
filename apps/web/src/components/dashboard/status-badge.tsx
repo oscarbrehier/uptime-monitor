@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import type { MonitorStatus } from "@/lib/mock-data";
+import type { MonitorStatus } from "@/lib/monitorUtils";
 import { cn } from "@/lib/utils";
 
 const STATUS_CONFIG: Record<

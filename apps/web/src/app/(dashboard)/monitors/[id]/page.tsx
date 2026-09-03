@@ -1,39 +1,37 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Globe, Pencil, Timer } from "lucide-react";
+import { ArrowLeft, Globe, Timer } from "lucide-react";
 
-import { IncidentHistory } from "@/components/dashboard/incident-history";
 import { LatencyChart } from "@/components/dashboard/latency-chart";
-import { MonitorFormDialog } from "@/components/dashboard/monitor-form-dialog";
 import { PingLogFeed } from "@/components/dashboard/ping-log-feed";
-import { RunCheckButton } from "@/components/dashboard/run-check-button";
 import { StatusBadge } from "@/components/dashboard/status-badge";
-import { Button } from "@/components/ui/button";
+import { UptimeTimeline } from "@/components/dashboard/uptime-timeline";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  generatePingLogs,
-  getIncidentsForMonitor,
-  getMonitor,
-  monitors,
-} from "@/lib/mock-data";
-
-export function generateStaticParams() {
-  return monitors.map((m) => ({ id: m.id }));
-}
+import { getMonitors } from "@/lib/actions/monitors";
+import { getLatestPings } from "@/lib/actions/pings";
+import { buildMonitorStats, monitorName } from "@/lib/monitorUtils";
 
 export async function generateMetadata(props: PageProps<"/monitors/[id]">) {
   const { id } = await props.params;
-  const monitor = getMonitor(id);
-  return { title: monitor ? monitor.name : "Monitor" };
+  const monitorsResult = await getMonitors();
+  const monitor = monitorsResult.success ? monitorsResult.data.find((m) => m.id === id) : undefined;
+  return { title: monitor ? monitorName(monitor.url) : "Monitor" };
 }
 
 export default async function MonitorDetailPage(props: PageProps<"/monitors/[id]">) {
   const { id } = await props.params;
-  const monitor = getMonitor(id);
+  const monitorsResult = await getMonitors();
+  const monitor = monitorsResult.success ? monitorsResult.data.find((m) => m.id === id) : undefined;
   if (!monitor) notFound();
 
-  const pings = generatePingLogs(monitor.id, 30);
-  const monitorIncidents = getIncidentsForMonitor(monitor.id);
+  const pingsResult = await getLatestPings(monitor.id);
+  const { pings, uptimePercentage } = pingsResult.success
+    ? pingsResult.data
+    : { pings: [], uptimePercentage: 0 };
+  const stats = buildMonitorStats(monitor, pings, uptimePercentage);
+  const recentPings = [...pings].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -48,39 +46,25 @@ export default async function MonitorDetailPage(props: PageProps<"/monitors/[id]
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-semibold tracking-tight">{monitor.name}</h1>
-            <StatusBadge status={monitor.status} pulse />
+            <h1 className="text-xl font-semibold tracking-tight">{monitorName(monitor.url)}</h1>
+            <StatusBadge status={stats.status} pulse />
           </div>
           <p className="flex items-center gap-1.5 font-mono text-sm text-muted-foreground">
             <Globe className="size-3.5" />
-            {monitor.method} {monitor.url}
+            {monitor.url}
           </p>
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Timer className="size-3.5" />
-            Checked every {monitor.checkInterval}s from {monitor.region} · timeout{" "}
-            {monitor.timeoutMs}ms
+            Checked every {monitor.interval_seconds}s
           </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <RunCheckButton />
-          <MonitorFormDialog
-            monitor={monitor}
-            trigger={
-              <Button variant="outline" size="sm">
-                <Pencil className="size-3.5" />
-                Edit
-              </Button>
-            }
-          />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         {[
-          { label: "Uptime 24h", value: `${monitor.uptime24h}%` },
-          { label: "Uptime 30d", value: `${monitor.uptime30d}%` },
-          { label: "Avg latency", value: `${monitor.avgLatencyMs}ms` },
-          { label: "P95 latency", value: `${monitor.p95LatencyMs}ms` },
+          { label: "Uptime 24h", value: `${stats.uptime24h}%` },
+          { label: "Avg latency", value: `${stats.avgLatencyMs}ms` },
+          { label: "Checks (24h)", value: `${stats.pingCount}` },
         ].map((stat) => (
           <Card key={stat.label} className="p-4">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -93,7 +77,7 @@ export default async function MonitorDetailPage(props: PageProps<"/monitors/[id]
 
       <Card>
         <CardContent className="pt-5">
-          <LatencyChart monitorId={monitor.id} />
+          <LatencyChart pings={pings} />
         </CardContent>
       </Card>
 
@@ -103,16 +87,16 @@ export default async function MonitorDetailPage(props: PageProps<"/monitors/[id]
             <CardTitle>Ping log</CardTitle>
           </CardHeader>
           <CardContent className="max-h-96 overflow-y-auto">
-            <PingLogFeed pings={pings} />
+            <PingLogFeed pings={recentPings} />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Incident history</CardTitle>
+            <CardTitle>24h check history</CardTitle>
           </CardHeader>
           <CardContent>
-            <IncidentHistory incidents={monitorIncidents} />
+            <UptimeTimeline pings={pings} />
           </CardContent>
         </Card>
       </div>

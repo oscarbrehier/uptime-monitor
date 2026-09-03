@@ -1,6 +1,7 @@
-import { CheckCircle2, Clock, XCircle } from "lucide-react";
+import { Activity, CheckCircle2, Clock, XCircle } from "lucide-react";
 
-import type { PingLog } from "@/lib/mock-data";
+import { EmptyState } from "@/components/dashboard/empty-state";
+import { pingStatus, type Ping } from "@/lib/monitorUtils";
 import { cn } from "@/lib/utils";
 
 const ICON = {
@@ -15,33 +16,41 @@ const ICON_COLOR = {
   timeout: "text-status-degraded",
 } as const;
 
-export function PingLogFeed({ pings }: { pings: PingLog[] }) {
+export function PingLogFeed({ pings }: { pings: Ping[] }) {
+  if (pings.length === 0) {
+    return (
+      <EmptyState
+        icon={Activity}
+        title="No checks yet"
+        description="Pulse will start logging checks once this monitor runs."
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col">
       {pings.map((ping) => {
-        const Icon = ICON[ping.status];
+        const status = pingStatus(ping.status_code);
+        const Icon = ICON[status];
         return (
           <div
             key={ping.id}
             className="flex items-center gap-3 border-b border-border py-2.5 last:border-0"
           >
-            <Icon className={cn("size-4 shrink-0", ICON_COLOR[ping.status])} />
-            <span className="w-20 shrink-0 font-mono text-xs text-muted-foreground uppercase">
-              {ping.region}
-            </span>
-            <span className="w-24 shrink-0 font-mono text-xs">
-              {ping.status === "timeout" ? "Timeout" : ping.statusCode}
+            <Icon className={cn("size-4 shrink-0", ICON_COLOR[status])} />
+            <span className="w-20 shrink-0 font-mono text-xs">
+              {status === "timeout" ? "Timeout" : ping.status_code}
             </span>
             <span
               className={cn(
                 "w-16 shrink-0 font-mono text-xs",
-                ping.latencyMs > 800 && "text-status-degraded",
+                ping.latency_ms > 800 && "text-status-degraded",
               )}
             >
-              {ping.latencyMs}ms
+              {ping.latency_ms}ms
             </span>
             <span className="ml-auto shrink-0 text-xs text-muted-foreground">
-              {new Date(ping.timestamp).toLocaleString()}
+              {new Date(ping.created_at).toLocaleString()}
             </span>
           </div>
         );
