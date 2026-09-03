@@ -76,16 +76,16 @@ export function MonitorCard({
 
       <div className="grid grid-cols-3 gap-2 border-t border-border pt-3 text-xs">
         <div>
-          <p className="text-muted-foreground">Uptime 24h</p>
-          <p className="mt-0.5 font-medium">{monitor.uptime24h}%</p>
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Uptime 24h</p>
+          <p className="mt-0.5 font-mono font-medium">{monitor.uptime24h}%</p>
         </div>
         <div>
-          <p className="text-muted-foreground">Avg latency</p>
-          <p className="mt-0.5 font-medium">{monitor.avgLatencyMs}ms</p>
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Avg latency</p>
+          <p className="mt-0.5 font-mono font-medium">{monitor.avgLatencyMs}ms</p>
         </div>
         <div>
-          <p className="text-muted-foreground">Interval</p>
-          <p className="mt-0.5 font-medium">{monitor.checkInterval}s</p>
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Interval</p>
+          <p className="mt-0.5 font-mono font-medium">{monitor.checkInterval}s</p>
         </div>
       </div>
     </Card>

@@ -33,8 +33,8 @@ export function Topbar() {
 				<SheetContent side="left" className="w-72">
 					<SheetHeader>
 						<SheetTitle className="flex items-center gap-2">
-							<div className="flex size-6 items-center justify-center rounded-md bg-[linear-gradient(135deg,#7c5cff_0%,#38bdf8_100%)]">
-								<brand.icon className="size-3.5 text-white" />
+							<div className="flex size-6 items-center justify-center rounded-md border border-violet-accent/30 bg-violet-accent/15">
+								<brand.icon className="size-3.5 text-violet-accent" />
 							</div>
 							{brand.name}
 						</SheetTitle>
@@ -55,8 +55,8 @@ export function Topbar() {
 			</div>
 			<div className="flex flex-1 items-center gap-2 md:hidden">
 				<Link href="/dashboard" className="flex items-center gap-2 text-sm font-semibold">
-					<div className="flex size-6 items-center justify-center rounded-md bg-[linear-gradient(135deg,#7c5cff_0%,#38bdf8_100%)]">
-						<brand.icon className="size-3.5 text-white" />
+					<div className="flex size-6 items-center justify-center rounded-md border border-violet-accent/30 bg-violet-accent/15">
+						<brand.icon className="size-3.5 text-violet-accent" />
 					</div>
 					{brand.name}
 				</Link>

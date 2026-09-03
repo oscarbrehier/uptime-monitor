@@ -21,7 +21,7 @@ export function WorkspaceSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex w-full items-center gap-2 rounded-lg border border-border bg-secondary/40 px-2.5 py-2 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring/40">
-        <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-[linear-gradient(135deg,#7c5cff_0%,#38bdf8_100%)] text-[11px] font-semibold text-white">
+        <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-violet-accent/30 bg-violet-accent/15 text-[11px] font-semibold text-violet-accent">
           {active.name.charAt(0)}
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
@@ -39,7 +39,7 @@ export function WorkspaceSwitcher() {
             className="justify-between"
           >
             <div className="flex items-center gap-2">
-              <div className="flex size-5 shrink-0 items-center justify-center rounded-md bg-[linear-gradient(135deg,#7c5cff_0%,#38bdf8_100%)] text-[10px] font-semibold text-white">
+              <div className="flex size-5 shrink-0 items-center justify-center rounded-md border border-violet-accent/30 bg-violet-accent/15 text-[10px] font-semibold text-violet-accent">
                 {w.name.charAt(0)}
               </div>
               <span>{w.name}</span>

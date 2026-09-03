@@ -14,8 +14,8 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border bg-secondary/20 px-6 py-16 text-center">
-      <div className="flex size-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#7c5cff_0%,#38bdf8_100%)] shadow-[0_8px_24px_-8px_rgba(124,92,255,0.55)]">
-        <Icon className="size-6 text-white" />
+      <div className="flex size-12 items-center justify-center rounded-2xl border border-violet-accent/30 bg-violet-accent/15">
+        <Icon className="size-6 text-violet-accent" />
       </div>
       <div className="flex flex-col gap-1">
         <p className="text-sm font-semibold">{title}</p>

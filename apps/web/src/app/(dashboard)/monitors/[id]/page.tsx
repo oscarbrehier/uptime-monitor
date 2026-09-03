@@ -83,8 +83,10 @@ export default async function MonitorDetailPage(props: PageProps<"/monitors/[id]
           { label: "P95 latency", value: `${monitor.p95LatencyMs}ms` },
         ].map((stat) => (
           <Card key={stat.label} className="p-4">
-            <p className="text-xs text-muted-foreground">{stat.label}</p>
-            <p className="mt-1 text-lg font-semibold">{stat.value}</p>
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+              {stat.label}
+            </p>
+            <p className="mt-1 font-mono text-2xl font-black tracking-tight">{stat.value}</p>
           </Card>
         ))}
       </div>

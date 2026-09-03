@@ -59,8 +59,8 @@ export function LatencyChart({ monitorId }: { monitorId: string }) {
           <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id="latencyFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#7c5cff" stopOpacity={0.4} />
-                <stop offset="100%" stopColor="#38bdf8" stopOpacity={0} />
+                <stop offset="0%" stopColor="#5e5ce6" stopOpacity={0.35} />
+                <stop offset="100%" stopColor="#5e5ce6" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
@@ -92,7 +92,7 @@ export function LatencyChart({ monitorId }: { monitorId: string }) {
             <Area
               type="monotone"
               dataKey="latencyMs"
-              stroke="#7c5cff"
+              stroke="#5e5ce6"
               strokeWidth={2}
               fill="url(#latencyFill)"
               isAnimationActive={false}

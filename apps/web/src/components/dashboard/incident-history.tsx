@@ -26,27 +26,22 @@ export function IncidentHistory({ incidents }: { incidents: Incident[] }) {
       {incidents.map((incident) => (
         <div
           key={incident.id}
-          className="flex flex-col gap-2 rounded-xl border border-border bg-secondary/20 p-4 sm:flex-row sm:items-center sm:justify-between"
+          className="flex flex-col gap-2 rounded-xl border border-border bg-secondary/20 p-4"
         >
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <Badge variant={incident.status === "ongoing" ? "incident" : "outline"}>
-                {incident.status === "ongoing" ? "Ongoing" : "Resolved"}
-              </Badge>
-              <p className="text-sm font-medium">{incident.cause}</p>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Started {new Date(incident.startedAt).toLocaleString()}
-              {incident.resolvedAt &&
-                ` · Recovered ${new Date(incident.resolvedAt).toLocaleString()}`}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-muted-foreground">Downtime</p>
-            <p className="font-mono text-sm font-medium">
+          <div className="flex items-center justify-between gap-2">
+            <Badge variant={incident.status === "ongoing" ? "incident" : "outline"}>
+              {incident.status === "ongoing" ? "Ongoing" : "Resolved"}
+            </Badge>
+            <p className="font-mono text-xs text-muted-foreground">
               {formatDuration(incident.durationMinutes)}
             </p>
           </div>
+          <p className="text-sm font-medium">{incident.cause}</p>
+          <p className="font-mono text-xs text-muted-foreground">
+            {new Date(incident.startedAt).toLocaleString()}
+            {incident.resolvedAt &&
+              ` · recovered ${new Date(incident.resolvedAt).toLocaleString()}`}
+          </p>
         </div>
       ))}
     </div>

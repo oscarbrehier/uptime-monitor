@@ -21,14 +21,14 @@ export function PricingTable() {
             <div
               key={tier.name}
               className={cn(
-                "relative flex flex-col gap-6 rounded-2xl border p-6",
+                "relative flex flex-col gap-6 rounded-2xl border p-6 backdrop-blur-md",
                 tier.highlighted
-                  ? "border-primary/40 bg-[linear-gradient(180deg,rgba(124,92,255,0.12)_0%,rgba(20,20,22,1)_60%)] shadow-[0_0_0_1px_rgba(124,92,255,0.15),0_20px_60px_-20px_rgba(124,92,255,0.45)]"
-                  : "border-border bg-card",
+                  ? "border-violet-accent/40 bg-violet-accent/[0.06]"
+                  : "border-border bg-card/60",
               )}
             >
               {tier.highlighted && (
-                <span className="absolute -top-3 left-6 rounded-full bg-[linear-gradient(135deg,#7c5cff_0%,#38bdf8_100%)] px-3 py-1 text-[11px] font-medium text-white shadow">
+                <span className="absolute -top-3 left-6 rounded-full border border-violet-accent/30 bg-card px-3 py-1 text-[11px] font-medium text-violet-accent">
                   Most popular
                 </span>
               )}

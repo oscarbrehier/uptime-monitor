@@ -13,8 +13,8 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 md:px-8">
         <Link href="/" className="flex items-center gap-2 text-sm font-semibold">
-          <div className="flex size-6 items-center justify-center rounded-md bg-[linear-gradient(135deg,#7c5cff_0%,#38bdf8_100%)]">
-            <Activity className="size-3.5 text-white" />
+          <div className="flex size-6 items-center justify-center rounded-md border border-violet-accent/30 bg-violet-accent/15">
+            <Activity className="size-3.5 text-violet-accent" />
           </div>
           Pulse
         </Link>

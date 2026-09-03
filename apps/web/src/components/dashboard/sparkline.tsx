@@ -5,10 +5,10 @@ import { AreaChart, Area, ResponsiveContainer, YAxis } from "recharts";
 import type { MonitorStatus } from "@/lib/mock-data";
 
 const STROKE: Record<MonitorStatus, string> = {
-  operational: "#34d399",
+  operational: "#10b981",
   degraded: "#f59e0b",
-  incident: "#fb7185",
-  paused: "#71717a",
+  incident: "#ff453a",
+  paused: "#6b7280",
 };
 
 export function Sparkline({

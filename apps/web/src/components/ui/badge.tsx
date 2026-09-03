@@ -11,11 +11,11 @@ const badgeVariants = cva(
         default: "border-border bg-secondary text-secondary-foreground",
         outline: "border-border text-foreground",
         operational:
-          "border-status-operational/20 bg-status-operational/10 text-status-operational",
+          "border-status-operational/20 bg-status-operational/10 text-status-operational shadow-[0_0_12px_rgba(16,185,129,0.25)]",
         degraded:
-          "border-status-degraded/20 bg-status-degraded/10 text-status-degraded",
+          "border-status-degraded/20 bg-status-degraded/10 text-status-degraded shadow-[0_0_12px_rgba(245,158,11,0.25)]",
         incident:
-          "border-status-incident/20 bg-status-incident/10 text-status-incident",
+          "border-status-incident/20 bg-status-incident/10 text-status-incident shadow-[0_0_12px_rgba(255,69,58,0.25)]",
         paused:
           "border-status-paused/20 bg-status-paused/10 text-status-paused",
         brand: "border-primary/20 bg-primary/10 text-primary",

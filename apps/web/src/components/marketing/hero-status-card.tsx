@@ -6,7 +6,7 @@ export function HeroStatusCard() {
   const preview = monitors.slice(0, 4);
 
   return (
-    <div className="glass w-full max-w-md rounded-2xl border border-border/80 shadow-2xl">
+    <div className="glass w-full max-w-md rounded-2xl border border-border/80">
       <div className="flex items-center gap-1.5 border-b border-border/80 px-4 py-3">
         <span className="size-2.5 rounded-full bg-[#ff5f57]" />
         <span className="size-2.5 rounded-full bg-[#febc2e]" />

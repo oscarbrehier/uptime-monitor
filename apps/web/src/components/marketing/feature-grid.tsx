@@ -1,35 +1,43 @@
 import { Bell, Gauge, Globe2, Layers3 } from "lucide-react";
 
+import { cn } from "@/lib/utils";
+
 const FEATURES = [
   {
     icon: Layers3,
     title: "Massive concurrency",
     description:
       "Run thousands of checks in parallel without any lag in detection or alerting.",
-    glow: "from-violet-500/20",
+    accent: "violet-accent",
   },
   {
     icon: Globe2,
     title: "Global edge monitoring",
     description:
       "Probe your endpoints from regions around the world to catch regional outages fast.",
-    glow: "from-sky-500/20",
+    accent: "emerald-glow",
   },
   {
     icon: Bell,
     title: "Real-time alerts",
     description:
       "Get paged over Slack, webhook, or email the moment something looks off.",
-    glow: "from-amber-500/20",
+    accent: "amber-glow",
   },
   {
     icon: Gauge,
     title: "Instant analytics",
     description:
       "Latency percentiles, uptime history, and incident timelines — always up to date.",
-    glow: "from-emerald-500/20",
+    accent: "violet-accent",
   },
-];
+] as const;
+
+const ACCENT_CLASSES = {
+  "violet-accent": "border-violet-accent/30 bg-violet-accent/15 text-violet-accent",
+  "emerald-glow": "border-emerald-glow/30 bg-emerald-glow/15 text-emerald-glow",
+  "amber-glow": "border-amber-glow/30 bg-amber-glow/15 text-amber-glow",
+} as const;
 
 export function FeatureGrid() {
   return (
@@ -49,18 +57,18 @@ export function FeatureGrid() {
           {FEATURES.map((feature) => (
             <div
               key={feature.title}
-              className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6"
+              className="rounded-2xl border border-border bg-card/60 p-6 backdrop-blur-md transition-colors hover:border-violet-accent/30"
             >
               <div
-                className={`pointer-events-none absolute -top-8 -right-8 size-28 rounded-full bg-gradient-to-br ${feature.glow} to-transparent blur-2xl transition-opacity group-hover:opacity-150`}
-              />
-              <div className="relative flex size-10 items-center justify-center rounded-xl border border-border bg-secondary/50">
-                <feature.icon className="size-5 text-primary" />
+                className={cn(
+                  "flex size-10 items-center justify-center rounded-xl border",
+                  ACCENT_CLASSES[feature.accent],
+                )}
+              >
+                <feature.icon className="size-5" />
               </div>
-              <h3 className="relative mt-4 text-sm font-semibold">{feature.title}</h3>
-              <p className="relative mt-1.5 text-sm text-muted-foreground">
-                {feature.description}
-              </p>
+              <h3 className="mt-4 text-sm font-semibold">{feature.title}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{feature.description}</p>
             </div>
           ))}
         </div>

@@ -9,8 +9,7 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden border-b border-border/60">
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" />
-      <div className="pointer-events-none absolute left-1/2 top-[-12rem] size-[42rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,_#7c5cff2e_0%,_transparent_70%)] blur-2xl" />
-      <div className="pointer-events-none absolute right-[-10rem] top-40 size-[30rem] rounded-full bg-[radial-gradient(circle,_#38bdf82e_0%,_transparent_70%)] blur-2xl" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-accent/40 to-transparent" />
 
       <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-12 px-4 py-20 md:grid-cols-2 md:items-center md:px-8 md:py-28">
         <div className="flex flex-col gap-6">
@@ -24,7 +23,7 @@ export function Hero() {
 
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
             Uptime monitoring that{" "}
-            <span className="text-gradient-brand">never blinks</span>.
+            <span className="text-violet-accent">never blinks</span>.
           </h1>
           <p className="max-w-md text-lg text-muted-foreground">
             Global edge checks, real-time alerts, and instant analytics for every
