@@ -5,7 +5,7 @@ export async function listAllActive() {
 
 	const { data, error } = await supabaseAdmin
 	.from("monitors")
-	.select("id, url")
+	.select("id, url, interval_seconds")
 	.eq("is_active", true);
 
 	if (error) {
