@@ -1,0 +1,1 @@
+alter publication supabase_realtime add table public.ping_logs;

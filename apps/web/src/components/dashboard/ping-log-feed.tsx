@@ -2,7 +2,7 @@ import { Activity, CheckCircle2, Clock, XCircle } from "lucide-react";
 
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { pingStatus, type Ping } from "@/lib/monitorUtils";
-import { cn } from "@/lib/utils";
+import { cn, formatTime } from "@/lib/utils";
 
 const ICON = {
   success: CheckCircle2,
@@ -50,7 +50,7 @@ export function PingLogFeed({ pings }: { pings: Ping[] }) {
               {ping.latency_ms}ms
             </span>
             <span className="ml-auto shrink-0 text-xs text-muted-foreground">
-              {new Date(ping.created_at).toLocaleString()}
+              {formatTime(ping.created_at)}
             </span>
           </div>
         );

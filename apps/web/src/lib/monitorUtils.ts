@@ -113,12 +113,16 @@ export async function getMonitorsWithPings(): Promise<MonitorsWithPings> {
 
 	const monitors = await Promise.all(
 		monitorsResult.data.map(async (monitor) => {
+
 			const pingsResult = await getLatestPings(monitor.id);
 			const { pings, uptimePercentage } = pingsResult.success
 				? pingsResult.data
 				: { pings: [], uptimePercentage: 0 };
+
 			pingsByMonitor[monitor.id] = pings;
+
 			return { ...monitor, ...buildMonitorStats(monitor, pings, uptimePercentage) };
+			
 		}),
 	);
 

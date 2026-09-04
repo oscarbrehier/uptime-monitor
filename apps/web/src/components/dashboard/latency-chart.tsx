@@ -11,6 +11,7 @@ import {
 } from "recharts";
 
 import type { Ping } from "@/lib/monitorUtils";
+import { formatTime } from "@/lib/utils";
 
 function formatTick(iso: string) {
   return new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
@@ -55,7 +56,7 @@ export function LatencyChart({ pings }: { pings: Ping[] }) {
                 borderRadius: 10,
                 fontSize: 12,
               }}
-              labelFormatter={(v) => new Date(v as string).toLocaleString()}
+              labelFormatter={(v) => formatTime(v as string)}
               formatter={(value) => [`${value}ms`, "Latency"]}
             />
             <Area

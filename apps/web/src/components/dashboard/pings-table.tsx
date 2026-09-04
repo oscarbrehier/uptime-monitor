@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { pingStatus, type Ping, type PingStatus } from "@/lib/monitorUtils";
-import { cn } from "@/lib/utils";
+import { cn, formatTime } from "@/lib/utils";
 
 type Filter = "all" | PingStatus;
 
@@ -110,7 +110,7 @@ export function PingsTable({
                     {ping.latency_ms}ms
                   </TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground">
-                    {new Date(ping.created_at).toLocaleTimeString()}
+                    {formatTime(ping.created_at)}
                   </TableCell>
                 </TableRow>
               );
