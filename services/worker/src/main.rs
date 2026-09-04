@@ -1,8 +1,5 @@
 use std::{
-    format,
-    sync::Arc,
-    time::{Duration, Instant},
-    vec,
+    format, sync::Arc, time::{Duration, Instant}, vec,
 };
 
 use reqwest::Client;
@@ -13,6 +10,7 @@ use tokio::{sync::RwLock, time::interval};
 struct Monitor {
     id: String,
     url: String,
+    interval_seconds: u16,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -22,8 +20,14 @@ struct PingResult {
     latency_ms: u64,
 }
 
+#[derive(Debug, Clone)]
+struct TrackedMonitor {
+    monitor: Monitor,
+    last_pinged: Option<Instant>
+}
+
 // Thread safe state
-type SharedMonitors = Arc<RwLock<Vec<Monitor>>>;
+type SharedMonitors = Arc<RwLock<Vec<TrackedMonitor>>>;
 
 async fn ping(client: &Client, monitor: &Monitor) -> PingResult {
     let start = Instant::now();
@@ -72,7 +76,26 @@ fn spawn_sync_monitors_task(client: Arc<Client>, shared_monitors: SharedMonitors
                         println!("[SYNC] Updated active monitors: {}", active_monitors.len());
 
                         let mut lock = shared_monitors.write().await;
-                        *lock = active_monitors;
+                        // *lock = active_monitors;
+
+                        let updated_tracked_monitors: Vec<TrackedMonitor> = active_monitors
+                            .into_iter()
+                            .map(|new_mon| {
+
+                                let existing_last_ping = lock
+                                    .iter()
+                                    .find(|existing| existing.monitor.id == new_mon.id)
+                                    .and_then(|existing| existing.last_pinged);
+
+                                TrackedMonitor {
+                                    monitor: new_mon,
+                                    last_pinged: existing_last_ping
+                                }
+
+                            })
+                            .collect();
+
+                        *lock = updated_tracked_monitors;
                     }
                     Err(e) => eprintln!("[SYNC ERROR] Failed to parse monitors JSON: {e}"),
                 },
@@ -112,24 +135,53 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     spawn_sync_monitors_task(Arc::clone(&client), Arc::clone(&monitors));
 
-    let mut ping_ticker = interval(Duration::from_secs(10));
+    // Poll at half the minimum interval (10s) to reduce scheduling drift
+    let mut ping_ticker = interval(Duration::from_secs(5));
 
     loop {
         ping_ticker.tick().await;
 
-        let active_monitors = {
-            let lock = monitors.read().await;
-            lock.clone()
+        let now = Instant::now();
+
+        let ready_monitors: Vec<_> = {
+
+            let mut lock = monitors.write().await;
+            let mut ready = Vec::new();
+
+            for tracked in lock.iter_mut() {
+
+                let is_due = match tracked.last_pinged {
+                    None => true,
+                    Some(last) => {
+                        now.duration_since(last).as_secs() >= tracked.monitor.interval_seconds as u64
+                    }
+                };
+
+                if is_due {
+                    tracked.last_pinged = Some(now); // stamp now before the ping, so timing counts from scheduling
+                    ready.push(tracked.clone()); 
+                }
+
+            }
+
+            ready
+
         };
 
+        if ready_monitors.is_empty() {
+            continue ;
+        }
+
+        // Ping all due monitors concurrently
         let mut tasks = Vec::new();
-        for monitor in active_monitors {
+        for tracked in ready_monitors {
             let client_ref = Arc::clone(&client);
             tasks.push(tokio::spawn(
-                async move { ping(&client_ref, &monitor).await },
+                async move { ping(&client_ref, &tracked.monitor).await },
             ));
         }
 
+        
         let mut results = Vec::new();
         for task in tasks {
             if let Ok(result) = task.await {
